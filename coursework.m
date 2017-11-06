@@ -13,32 +13,42 @@ weights = containers.Map(w_keys, w_vals);
 
 % define hyperparams
 eta = 0.1;
+n_epochs = 100;
 
-% loop through examples in training set
-for i = 1:length(X)
-    x_example = X(i, :);
-    y_example = y(i);
+for i_epoch = 1:n_epochs
+    error = 0;
     
-    % get features of this example
-    x1 = x_example(1);
-    x2 = x_example(2);
-    
-    % ------------
-    % FORWARD PROP
-    % ------------
-    % calculate the activations at all nodes
-    [h1, h2, h3, out] = forward(x_example, weights);
-    
-    % -------------
-    % BACKWARD PROP
-    % -------------
-    d_weights = backward(h1, h2, h3, out, y_example, x1, x2, weights);
-    
-    % --------------
-    % UPDATE WEIGHTS
-    % --------------
-    % update all weights in the map
-    for k = keys(weights)
-        weights(k{1}) = weights(k{1}) - eta * d_weights(k{1});
+    % loop through examples in training set
+    for i_example = 1:length(X)
+        x_example = X(i_example, :);
+        y_example = y(i_example);
+
+        % get features of this example
+        x1 = x_example(1);
+        x2 = x_example(2);
+
+        % ------------
+        % FORWARD PROP
+        % ------------
+        % calculate the activations at all nodes
+        [h1, h2, h3, out] = forward(x_example, weights);
+        
+        error = error + abs(out - y_example);
+
+        % -------------
+        % BACKWARD PROP
+        % -------------
+        d_weights = backward(h1, h2, h3, out, y_example, x1, x2, weights);
+
+        % --------------
+        % UPDATE WEIGHTS
+        % --------------
+        % update all weights in the map
+        for k = keys(weights)
+            weights(k{1}) = weights(k{1}) - eta * d_weights(k{1});
+        end
     end
+    
+    fprintf('Error in epoch #%i', i_epoch);
+    disp(error / 2.);
 end

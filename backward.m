@@ -1,4 +1,4 @@
-function d_weights = backward(h1, h2, h3, out, y, x1, x2, weights)
+function d_weights = backward(activations, y, x1, x2, weights)
 %BACKWARD Compute deriv. of cost MSE wrt every input weight.
 % Returns array of gradients for each weight.
 
@@ -8,16 +8,16 @@ d_weights = zeros(1, 9);
 
 % calculate betas at units
 % activation fn = identity... deriv of identity wrt x = 1.
-b_out = (out - y);
+b_out = (activations('out') - y);
 
-b_h1 = weights(9) * b_out * h1 * (1.0 - h1);
-b_h2 = weights(8) * b_out * h2 * (1.0 - h2);
-b_h3 = weights(7) * b_out * h3 * (1.0 - h3);
+b_h1 = weights(9) * b_out * activations('h1') * (1.0 - activations('h1'));
+b_h2 = weights(8) * b_out * activations('h2') * (1.0 - activations('h2'));
+b_h3 = weights(7) * b_out * activations('h3') * (1.0 - activations('h3'));
 
 % calculate the derivatives of cost fn w/r/t each weight
-d_weights(9) = b_out * h1;
-d_weights(8) = b_out * h2;
-d_weights(7) = b_out * h3;
+d_weights(9) = b_out * activations('h1');
+d_weights(8) = b_out * activations('h2');
+d_weights(7) = b_out * activations('h3');
 
 d_weights(6) = b_h3 * x2;
 d_weights(4) = b_h2 * x2;

@@ -34,16 +34,16 @@ for i_epoch = 1:n_epochs
         % FORWARD PROP
         % ------------
         % calculate the activations at all nodes
-        [h1, h2, h3, out] = forward(x_example, weights);
+        activations = forward(x_example, weights);
         
         % update the error for this batch (single example)
-        i_error = i_error + abs(out - y_example);
+        i_error = i_error + abs(activations('out') - y_example);
 
         % -------------
         % BACKWARD PROP
         % -------------
         % perform backprop incrementally, after each example:
-        d_weights = backward(h1, h2, h3, out, y_example, x1, x2, weights);
+        d_weights = backward(activations, y_example, x1, x2, weights);
 
         % --------------
         % UPDATE WEIGHTS
@@ -66,7 +66,7 @@ end
 
 % plot the error decrease as a function of # epochs
 plot(1:n_epochs, errors);
-title('Error')
+title(sprintf('Error curves - eta: %.2f - beta: %.2f', eta, beta))
 xlabel('Epoch #')
 ylabel('Average Error across epoch')
 

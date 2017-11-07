@@ -6,13 +6,10 @@ X = [1 1
 y = [0 1];
 
 % define the initial weights provided by coursework,
-% store in a Map:
-w_keys = {'w1', 'w2', 'w3', 'w4', 'w5', 'w6', 'w7', 'w8', 'w9'};
-w_vals = [-0.2, 0.15, -0.15, 0.1, 0.3, 0.1 ,0.3, 0.1, -0.3];
-weights = containers.Map(w_keys, w_vals);
+weights = [-0.2 0.15 -0.15 0.1 0.3 0.1 0.3 0.1 -0.3];
 
 % store previous gradients for momentum
-d_weights_old = containers.Map(w_keys, zeros(1, 9));
+d_weights_old = zeros(1, 9);
 
 % define hyperparams
 eta = 0.25;
@@ -51,11 +48,8 @@ for i_epoch = 1:n_epochs
         % --------------
         % UPDATE WEIGHTS
         % --------------
-        % update all weights in the map
-        for k = keys(weights)
-            weights(k{1}) = weights(k{1}) - eta * d_weights(k{1}) + ...
-                beta * d_weights_old(k{1}); % momentum term
-        end
+        % update weight vector
+        weights = weights - eta * d_weights + beta * d_weights_old;
                 
         % update the old weights with the new
         d_weights_old = d_weights;

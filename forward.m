@@ -6,15 +6,15 @@ x1 = x(1);
 x2 = x(2);
 
 % calculate hidden units
-h1 = sigmoid(weights('w1') * x1);
-h3 = sigmoid(weights('w6') * x2);
-h2 = sigmoid(weights('w3') * x1 + weights('w4') * x2);
+h1 = sigmoid(weights(1) * x1);
+h3 = sigmoid(weights(6) * x2);
+h2 = sigmoid(weights(3) * x1 + weights(4) * x2);
 
 % output (unthresholded neuron?i.e. identity activation)
-out = weights('w9') * h1 ...
-    + weights('w8') * h2 ...
-    + weights('w7') * h3 ...
-    + weights('w2') * x1 + weights('w5') * x2;
+out = weights(9) * h1 ...
+    + weights(8) * h2 ...
+    + weights(7) * h3 ...
+    + weights(2) * x1 + weights(5) * x2;
   
 end
 

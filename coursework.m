@@ -12,8 +12,8 @@ weights = [-0.2 0.15 -0.15 0.1 0.3 0.1 0.3 0.1 -0.3];
 d_weights_old = zeros(1, 9);
 
 % define hyperparams
-eta = 0.25;
-beta = 0.00;
+eta = 0.75;
+beta = 0.2;
 n_epochs = 100;
 
 errors = zeros(1, n_epochs);
@@ -48,11 +48,11 @@ for i_epoch = 1:n_epochs
         % --------------
         % UPDATE WEIGHTS
         % --------------
+        % update momentum term
+        d_weights_old = beta * d_weights_old + d_weights;
+        
         % update weight vector
-        weights = weights - eta * d_weights + beta * d_weights_old;
-                
-        % update the old weights with the new
-        d_weights_old = d_weights;
+        weights = weights - eta * d_weights_old;
 
     end
     

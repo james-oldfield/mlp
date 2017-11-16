@@ -5,8 +5,8 @@ X = [1 1
      1 0];
 y = [0 1];
 
-% define the initial weights provided by coursework,
-weights = [-0.2 0.15 -0.15 0.1 0.3 0.1 0.3 0.1 -0.3];
+% boolean to specify whether we use coursework weights
+coursework = 1;
 
 % --------------------
 % SPECIFY ARCHITECTURE
@@ -23,7 +23,7 @@ linear_terms = zeros(size(X, 2));
 
 % specify which activ fn we wish to use at each layer,
 % storing function handles.
-a_functions  = {@sigmoid, @sigmoid, @identity};
+a_functions  = {@sigmoid, @identity};
 
 % create map of matrices to contain weights for every layer,
 % and corresponding derivatives
@@ -36,8 +36,17 @@ for i = 1:length(architecture)-1
     d_weights(int2str(i)) = zeros(architecture(i), architecture(i+1));
 end
 
-% store previous gradients for momentum
-d_weights_old = zeros(1, 9);
+% populate weights with coursework values, if chosen, else remain random.
+if coursework == 1
+    % load coursework weights
+    load w1.dat;
+    load w2.dat;
+    load linear_weights.dat;
+
+    weights('1') = w1;
+    weights('2') = w2;
+    linear_terms = linear_weights;
+end
 
 % define hyperparams
 eta = 0.75;

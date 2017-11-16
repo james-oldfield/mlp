@@ -24,13 +24,11 @@ for i = 1:length(weights)
     % vectorised computation of activations, and store in map
     % using the specified activation function handle (e.g. sigmoid)
     a = arrayfun(a_fn, a * weights(layer_i));
+    
+    % add linear terms in last iteration
+    if i == length(weights)
+        a = a + x * linear_terms;
+    end
+    
     activations(layer_i) = a;
 end
-
-% get the last layer's output
-last_layer = int2str(length(activations));
-out = activations(last_layer);
-
-% add on linear terms to output if specified as 1, else zeros out.
-activations(last_layer) = out + x * linear_terms;
-disp(activations(last_layer));

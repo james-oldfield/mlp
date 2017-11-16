@@ -1,22 +1,33 @@
-function activations = forward(x, weights)
-%FORWARD forward propagates network using supplied variables.
+function activations = forward(x, weights, a_functions, linear_terms)
+%FORWARD forward propagates network
+% ----
+% :param x: input vector for mini-batch
+% :param weights: map of matrices for weights for each layer
+% :param a_functions: cell of activation function handles
+% :param linear_terms: boolean (0,1) specifying whether to add lin terms
+% ----
 % Returns activations
-a_keys = {'h1', 'h2', 'h3', 'out'};
-activations = containers.Map(a_keys, zeros(1, 4));
 
-x1 = x(1);
-x2 = x(2);
+% create a map of matrices to store activations at each layer
+activations = containers.Map;
 
-% calculate hidden units
-activations('h1') = sigmoid(weights(1) * x1);
-activations('h3') = sigmoid(weights(6) * x2);
-activations('h2') = sigmoid(weights(3) * x1 + weights(4) * x2);
+% first activation is simply our inputs
+a = x;
 
-% output (unthresholded neuron?i.e. identity activation)
-activations('out') = weights(9) * activations('h1') ...
-    + weights(8) * activations('h2') ...
-    + weights(7) * activations('h3') ...
-    + weights(2) * x1 + weights(5) * x2;
-  
+% propagate signal through each layer
+for i = 1:length(weights)
+    layer_i = int2str(i);
+    a_fn = a_functions{i};
+    
+    % vectorised computation of activations, and store in map
+    % using the specified activation function handle (e.g. sigmoid)
+    a = arrayfun(a_fn, a * weights(layer_i));
+    activations(layer_i) = a;
 end
 
+% get the last layer's output
+last_layer = int2str(length(activations));
+out = activations(last_layer);
+
+% add on linear terms to output if specified as 1, else zeros out.
+activations(last_layer) = out + x * linear_terms;

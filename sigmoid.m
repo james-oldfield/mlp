@@ -1,5 +1,13 @@
-function activation = sigmoid(z)
-%SIGMOID Compute sigmoid activation of z
+function activation = sigmoid(z, derivative)
+%SIGMOID Compute sigmoid activation of z, or its derivative
+% ----
+% :param z: weighted summation, pre-activation
+% :param derivative: boolean?return derivative?
+% ----
+% Returns sigmoid(z) or sigmoid'(z)
 activation = 1. / (1. + exp(-z));
+
+if derivative == 1
+    activation = activation * (1-activation);
 end
 

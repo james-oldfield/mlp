@@ -2,7 +2,6 @@ clear all;
 
 % define our inputs and ground truth values:
 X = [1 1
-     3 4
      1 0];
 y = [0 1];
 
@@ -19,11 +18,12 @@ weights = [-0.2 0.15 -0.15 0.1 0.3 0.1 0.3 0.1 -0.3];
 architecture = [2 3 1];
 
 % specify weights for linear terms
-linear_terms = rand(size(X, 2));
+% modify fn to use zeros() if not required
+linear_terms = zeros(size(X, 2));
 
 % specify which activ fn we wish to use at each layer,
 % storing function handles.
-a_functions  = {@sigmoid, @sigmoid, @sigmoid};
+a_functions  = {@sigmoid, @sigmoid, @identity};
 
 % create map of matrices to contain weights for every layer,
 % and corresponding derivatives

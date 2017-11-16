@@ -17,7 +17,9 @@ a = x;
 % propagate signal through each layer
 for i = 1:length(weights)
     layer_i = int2str(i);
-    a_fn = a_functions{i};
+    
+    % anon function, activation at this layer (no derivative - 0)
+    a_fn = @(x) a_functions{i}(x, 0);
     
     % vectorised computation of activations, and store in map
     % using the specified activation function handle (e.g. sigmoid)
@@ -31,3 +33,4 @@ out = activations(last_layer);
 
 % add on linear terms to output if specified as 1, else zeros out.
 activations(last_layer) = out + x * linear_terms;
+disp(activations(last_layer));

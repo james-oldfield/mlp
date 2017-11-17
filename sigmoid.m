@@ -8,6 +8,6 @@ function activation = sigmoid(z, derivative)
 activation = 1. / (1. + exp(-z));
 
 if derivative == 1
-    activation = activation * (1-activation);
+    activation = z * (1-z);
 end
 

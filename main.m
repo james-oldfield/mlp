@@ -11,7 +11,6 @@ coursework = 1;
 % --------------------
 % SPECIFY ARCHITECTURE
 % --------------------
-
 % i.e. [2 3 1] specifies that 2 units are in the input layer,
 % 3 units in hidden layer
 % 1 unit in the output
@@ -25,6 +24,11 @@ linear_terms = rand(size(X, 2)) - 0.5;
 % storing function handles.
 a_functions  = {@sigmoid, @identity};
 
+last_layer = int2str(length(architecture)-1);
+
+% ----------------
+% POPULATE WEIGHTS
+% ----------------
 % create map of matrices to contain weights for every layer,
 % and corresponding derivatives
 weights   = containers.Map;
@@ -48,12 +52,13 @@ if coursework == 1
     linear_terms = linear_weights;
 end
 
-% define hyperparams
+% ---------------
+% HYPERPARAMETERS
+% ---------------
 eta = 0.75;
 beta = 0.2;
 n_epochs = 100;
 
-last_layer = int2str(length(architecture)-1);
 errors = zeros(1, n_epochs);
 
 % -----
@@ -85,7 +90,7 @@ for i_epoch = 1:n_epochs
         % BACKWARD PROP
         % -------------
         % perform backprop incrementally, after each example:
-        d_weights = backward(activations, y_example, x1, x2, weights);
+        d_weights = backward(activations, y_example, x_example, weights, a_functions, linear_terms);
 
         % --------------
         % UPDATE WEIGHTS

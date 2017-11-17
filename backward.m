@@ -1,31 +1,53 @@
-function d_weights = backward(activations, y, x1, x2, weights)
+function d_weights = backward(activations, y, x, weights, a_functions, linear_terms)
 %BACKWARD Compute deriv. of cost MSE wrt every input weight.
 % Returns array of gradients for each weight.
+% ----
+% :param activations: map of vectors of activations at each layer
+% :param y: ground truth float
+% :param x: input feature vector
+% :param weights: map of matrices for weights for each layer
+% :param a_functions: cell of activation function handles
+% :param linear_terms: boolean (0,1) specifying whether to add lin terms
+% ----
+% Returns activations
 
-% define structure to store error derivatives,
-% initialise to zero
-d_weights = zeros(1, 9);
+d_weights = containers.Map;
+b_errors  = containers.Map;
 
-% calculate betas at units
-% activation fn = identity... deriv of identity wrt x = 1.
-b_out = (activations('out') - y);
+% add training examples into activations, so we can vectorise
+activations('0') = x;
 
-b_h1 = weights(9) * b_out * activations('h1') * (1.0 - activations('h1'));
-b_h2 = weights(8) * b_out * activations('h2') * (1.0 - activations('h2'));
-b_h3 = weights(7) * b_out * activations('h3') * (1.0 - activations('h3'));
-
-% calculate the derivatives of cost fn w/r/t each weight
-d_weights(9) = b_out * activations('h1');
-d_weights(8) = b_out * activations('h2');
-d_weights(7) = b_out * activations('h3');
-
-d_weights(6) = b_h3 * x2;
-d_weights(4) = b_h2 * x2;
-d_weights(3) = b_h2 * x1;
-d_weights(1) = b_h1 * x1;
-
-% linear terms
-d_weights(2) = b_out * x1;
-d_weights(5) = b_out * x2;
+% loop over every layer in reverse, computing derivataives w/r/t weight
+% matrices
+for i=length(activations)-1 : -1:1
+    % cache activation value
+    % + store handle to derivative of activ fn. used at this layer
+    this_layer = int2str(i);
+    a = activations(this_layer);
+    a_fn_d = @(x) a_functions{i}(x, 1);
+    
+    % ---------------
+    % ERRORS AT UNITS
+    % ---------------
+    % compute dE/dZ for output layer, in vectorised form,
+    % equations from http://neuralnetworksanddeeplearning.com/chap2.html
+    if i == length(activations)-1
+        % take hadamard product of error * deriv. of activ function
+        % as per equation BP1 ? ?^L = (a^L?y) ? ??(z^L).
+        b_error = (a - y) .* arrayfun(a_fn_d, a);
+    else
+        % otherwise we backpropagate the error
+        next_layer = int2str(i+1);
+ 
+        % per equation BP2 ? ?l=((w^l+1)T ?^l+1) ? ??(z^l),
+        b_error = weights(next_layer)' * b_errors(next_layer) .* arrayfun(a_fn_d, a);
+    end
+    
+    % store the vector of derivatives for units at this layer
+    b_errors(this_layer) = b_error;
+    
+    % -----------------
+    % ERRORS AT WEIGHTS
+    % -----------------
 
 end

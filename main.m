@@ -39,7 +39,7 @@ end
 
 % specify weights for linear terms
 % modify fn to use zeros() if not required
-linear_terms = rand(size(X, 2)) - 0.5;
+linear_terms = rand(length(X), 1) - 0.5
 d_linear_old = zeros('like', linear_terms);
 
 % populate weights with coursework values, if chosen, else remain random.

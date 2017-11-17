@@ -75,10 +75,6 @@ for i_epoch = 1:n_epochs
         x_example = X(i_example, :);
         y_example = y(i_example);
 
-        % get features of this example
-        x1 = x_example(1);
-        x2 = x_example(2);
-
         % ------------
         % FORWARD PROP
         % ------------

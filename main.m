@@ -31,13 +31,13 @@ last_layer = int2str(length(architecture)-1);
 % ----------------
 % create map of matrices to contain weights for every layer,
 % and corresponding derivatives
-weights   = containers.Map;
-d_weights = containers.Map;
+weights       = containers.Map;
+d_weights_old = containers.Map;
 
 % populate weight mats with zeros to map from layer i to i+1
 for i = 1:length(architecture)-1
     weights(int2str(i)) = rand(architecture(i), architecture(i+1)) - 0.5;
-    d_weights(int2str(i)) = zeros(architecture(i), architecture(i+1));
+    d_weights_old(int2str(i)) = zeros(architecture(i), architecture(i+1));
 end
 
 % populate weights with coursework values, if chosen, else remain random.
@@ -95,12 +95,15 @@ for i_epoch = 1:n_epochs
         % --------------
         % UPDATE WEIGHTS
         % --------------
-        % update momentum term
-        d_weights_old = beta * d_weights_old + d_weights;
-        
-        % update weight vector
-        weights = weights - eta * d_weights_old;
-
+        % update each weight matrix in the map
+        for i=1:length(weights)
+            this_layer = int2str(i);
+            
+            % update momentum term
+            d_weights_old(this_layer) = beta * d_weights_old(this_layer) + d_weights(this_layer)';
+            % update weight vector
+            weights(this_layer) = weights(this_layer) - eta * d_weights_old(this_layer);
+        end
     end
     
     % store average error for this epoch

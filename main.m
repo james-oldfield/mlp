@@ -5,7 +5,8 @@ X = [1 1
      1 0];
 y = [0 1];
 
-% boolean to specify whether we use coursework weights
+% boolean to specify whether we use coursework weights,
+% this also zeros-out connections for a non-fully connected net.
 coursework = 1;
 
 % --------------------
@@ -58,7 +59,7 @@ end
 % ---------------
 eta = 0.75;
 beta = 0.2;
-n_epochs = 100;
+n_epochs = 1;
 
 errors = zeros(1, n_epochs);
 
@@ -92,6 +93,16 @@ for i_epoch = 1:n_epochs
         % -------------
         % perform backprop incrementally, after each example:
         [d_weights, d_linear] = backward(activations, y_example, x_example, weights, a_functions, linear_terms);
+        
+        % ---------
+        % 'DROPOUT'
+        % ---------
+        % If we're using coursework, then nix any derivatives for
+        % connections we're not using (i.e. weight == 0)
+        if coursework
+            d_weights('1') = d_weights('1') .* (w1 ~= 0)';
+            d_weights('2') = d_weights('2') .* (w2 ~= 0)';
+        end
 
         % --------------
         % UPDATE WEIGHTS

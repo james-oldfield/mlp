@@ -31,7 +31,7 @@ last_layer = int2str(length(architecture)-1);
 weights       = containers.Map;
 d_weights_old = containers.Map;
 
-% populate weight mats with zeros to map from layer i to i+1
+% populate weight mats with rand(-0.5,0.5) to map from layer i to i+1
 for i = 1:length(architecture)-1
     weights(int2str(i)) = rand(architecture(i), architecture(i+1)) - 0.5;
     d_weights_old(int2str(i)) = zeros(architecture(i), architecture(i+1));

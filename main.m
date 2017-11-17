@@ -109,7 +109,7 @@ for i_epoch = 1:n_epochs
             
             % update momentum term
             d_weights_old(this_layer) = beta * d_weights_old(this_layer) + d_weights(this_layer)';
-            % update weight vector
+            % update weight matrix
             weights(this_layer) = weights(this_layer) - eta * d_weights_old(this_layer);
         end
         

@@ -17,11 +17,6 @@ coursework = 1;
 % 1 unit in the output
 architecture = [2 3 1];
 
-% specify weights for linear terms
-% modify fn to use zeros() if not required
-linear_terms = rand(size(X, 2)) - 0.5;
-d_linear_old = zeros('like', linear_terms);
-
 % specify which activ fn we wish to use at each layer,
 % storing function handles.
 a_functions  = {@sigmoid, @identity};
@@ -42,6 +37,11 @@ for i = 1:length(architecture)-1
     d_weights_old(int2str(i)) = zeros(architecture(i), architecture(i+1));
 end
 
+% specify weights for linear terms
+% modify fn to use zeros() if not required
+linear_terms = rand(size(X, 2)) - 0.5;
+d_linear_old = zeros('like', linear_terms);
+
 % populate weights with coursework values, if chosen, else remain random.
 if coursework == 1
     % load coursework weights
@@ -59,7 +59,7 @@ end
 % ---------------
 eta = 0.75;
 beta = 0.2;
-n_epochs = 1;
+n_epochs = 100;
 
 errors = zeros(1, n_epochs);
 

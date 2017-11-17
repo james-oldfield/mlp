@@ -20,12 +20,15 @@ activations('0') = x;
 % loop over every layer in reverse, computing derivataives w/r/t weight
 % matrices
 for i=length(activations)-1 : -1:1
+    this_layer = int2str(i);
+    next_layer = int2str(i+1);
+    prev_layer = int2str(i-1);
+    
     % cache activation value
     % + store handle to derivative of activ fn. used at this layer
-    this_layer = int2str(i);
     a = activations(this_layer);
     a_fn_d = @(x) a_functions{i}(x, 1);
-    
+
     % ---------------
     % ERRORS AT UNITS
     % ---------------
@@ -37,7 +40,6 @@ for i=length(activations)-1 : -1:1
         b_error = (a - y) .* arrayfun(a_fn_d, a);
     else
         % otherwise we backpropagate the error
-        next_layer = int2str(i+1);
  
         % per equation BP2 ? ?l=((w^l+1)T ?^l+1) ? ??(z^l),
         b_error = weights(next_layer)' * b_errors(next_layer) .* arrayfun(a_fn_d, a);
@@ -49,5 +51,6 @@ for i=length(activations)-1 : -1:1
     % -----------------
     % ERRORS AT WEIGHTS
     % -----------------
-
+    % backpropogate again to find deriv. w/r/t weights themselves
+    d_weights(this_layer) = b_errors(this_layer)' * activations(prev_layer);
 end

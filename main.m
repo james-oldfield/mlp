@@ -19,7 +19,7 @@ architecture = [2 3 1];
 
 % specify weights for linear terms
 % modify fn to use zeros() if not required
-linear_terms = zeros(size(X, 2));
+linear_terms = rand(size(X, 2)) - 0.5;
 
 % specify which activ fn we wish to use at each layer,
 % storing function handles.
@@ -32,7 +32,7 @@ d_weights = containers.Map;
 
 % populate weight mats with zeros to map from layer i to i+1
 for i = 1:length(architecture)-1
-    weights(int2str(i)) = rand(architecture(i), architecture(i+1));
+    weights(int2str(i)) = rand(architecture(i), architecture(i+1)) - 0.5;
     d_weights(int2str(i)) = zeros(architecture(i), architecture(i+1));
 end
 
@@ -53,6 +53,7 @@ eta = 0.75;
 beta = 0.2;
 n_epochs = 100;
 
+last_layer = int2str(length(architecture)-1);
 errors = zeros(1, n_epochs);
 
 % -----
@@ -78,7 +79,7 @@ for i_epoch = 1:n_epochs
         activations = forward(x_example, weights, a_functions, linear_terms);
         
         % update the error for this batch (single example)
-        i_error = i_error + abs(activations('out') - y_example);
+        i_error = i_error + abs(activations(last_layer) - y_example);
 
         % -------------
         % BACKWARD PROP

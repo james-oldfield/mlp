@@ -1,4 +1,4 @@
-function d_weights = backward(activations, y, x, weights, a_functions, linear_terms)
+function [d_weights, d_linear] = backward(activations, y, x, weights, a_functions, linear_terms)
 %BACKWARD Compute deriv. of cost MSE wrt every input weight.
 % Returns array of gradients for each weight.
 % ----
@@ -38,6 +38,9 @@ for i=length(activations)-1 : -1:1
         % take hadamard product of error * deriv. of activ function
         % as per equation BP1 ? ?^L = (a^L?y) ? ??(z^L).
         b_error = (a - y) .* arrayfun(a_fn_d, a);
+        
+        % compute deriv w/r/t linear weights
+        d_linear = b_error * x;
     else
         % otherwise we backpropagate the error
  

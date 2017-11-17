@@ -19,6 +19,7 @@ architecture = [2 3 1];
 % specify weights for linear terms
 % modify fn to use zeros() if not required
 linear_terms = rand(size(X, 2)) - 0.5;
+d_linear_old = zeros('like', linear_terms);
 
 % specify which activ fn we wish to use at each layer,
 % storing function handles.
@@ -90,7 +91,7 @@ for i_epoch = 1:n_epochs
         % BACKWARD PROP
         % -------------
         % perform backprop incrementally, after each example:
-        d_weights = backward(activations, y_example, x_example, weights, a_functions, linear_terms);
+        [d_weights, d_linear] = backward(activations, y_example, x_example, weights, a_functions, linear_terms);
 
         % --------------
         % UPDATE WEIGHTS
@@ -104,6 +105,10 @@ for i_epoch = 1:n_epochs
             % update weight vector
             weights(this_layer) = weights(this_layer) - eta * d_weights_old(this_layer);
         end
+        
+        % udpate the linear terms vector
+        d_linear_old = beta * d_linear_old + d_linear';
+        linear_terms = linear_terms - eta * d_linear_old;
     end
     
     % store average error for this epoch
@@ -119,4 +124,3 @@ plot(1:n_epochs, errors);
 title(sprintf('Error curves - eta: %.2f - beta: %.2f', eta, beta))
 xlabel('Epoch #')
 ylabel('Average Error across epoch')
-

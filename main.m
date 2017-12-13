@@ -10,14 +10,16 @@ coursework = 0;
 % --------------------
 % SPECIFY ARCHITECTURE
 % --------------------
-% i.e. [2 3 1] specifies that 2 units are in the input layer,
+% i.e. [2 3 5 1] specifies that 2 units are in the input layer,
 % 3 units in hidden layer
+% 5 units in next hidden layer, etc...
 % 1 unit in the output
-architecture = [2 3 4 1];
+architecture = [2 3 4 5 1];
 
 % specify which activ fn we wish to use at each layer,
 % storing function handles.
-a_functions  = {@sigmoid, @sigmoid, @identity};
+% MUST specify an activ function for each layer.
+a_functions  = {@sigmoid, @sigmoid, @sigmoid, @identity};
 
 last_layer = int2str(length(architecture)-1);
 

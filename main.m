@@ -6,6 +6,8 @@ y = [0 1];
 % boolean to specify whether we use coursework weights,
 % this also zeros-out connections for a non-fully connected net.
 coursework = 0;
+% use exponential learning rate decay?
+exp_eta_decay = 1;
 
 % --------------------
 % SPECIFY ARCHITECTURE
@@ -77,6 +79,11 @@ errors = zeros(1, n_epochs);
 for i_epoch = 1:n_epochs
     i_error = 0;
     
+    % decay learning rate exponentially
+    if exp_eta_decay
+        eta = eta * exp(-0.01 * i_epoch);
+    end
+
     % loop through examples in training set
     for i_example = 1:length(X)
         x_example = X(i_example, :);

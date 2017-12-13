@@ -1,5 +1,3 @@
-clear all;
-
 % define our inputs and ground truth values:
 X = [1 1
      1 0];
@@ -7,7 +5,7 @@ y = [0 1];
 
 % boolean to specify whether we use coursework weights,
 % this also zeros-out connections for a non-fully connected net.
-coursework = 1;
+coursework = 0;
 
 % --------------------
 % SPECIFY ARCHITECTURE
@@ -15,11 +13,11 @@ coursework = 1;
 % i.e. [2 3 1] specifies that 2 units are in the input layer,
 % 3 units in hidden layer
 % 1 unit in the output
-architecture = [2 3 1];
+architecture = [2 3 4 1];
 
 % specify which activ fn we wish to use at each layer,
 % storing function handles.
-a_functions  = {@sigmoid, @identity};
+a_functions  = {@sigmoid, @sigmoid, @identity};
 
 last_layer = int2str(length(architecture)-1);
 
@@ -39,7 +37,7 @@ end
 
 % specify weights for linear terms
 % modify fn to use zeros() if not required
-linear_terms = rand(length(X), 1) - 0.5
+linear_terms = rand(length(X), 1) - 0.5;
 d_linear_old = zeros('like', linear_terms);
 
 % populate weights with coursework values, if chosen, else remain random.
@@ -60,6 +58,13 @@ end
 eta = 0.75;
 beta = 0.2;
 n_epochs = 100;
+
+% use coursework's hyperparams if desired
+if coursework
+    eta = 1.0;
+    beta = 0.0; % no momentum!
+    n_epochs = 1;
+end
 
 errors = zeros(1, n_epochs);
 
@@ -87,28 +92,39 @@ for i_epoch = 1:n_epochs
         % -------------
         % BACKWARD PROP
         % -------------
-        % perform backprop incrementally, after each example:
-        [d_weights, d_linear] = backward(activations, y_example, x_example, weights, a_functions, linear_terms);
+        % perform backprop incrementally, after each example,
+        % i.e. compute error derivatives
+        [d_weights, d_linear] = backward(activations, y_example, x_example, weights, a_functions);
         
         % ---------
         % 'DROPOUT'
         % ---------
         % If we're using coursework, then nix any derivatives for
-        % connections we're not using (i.e. weight == 0)
+        % connections we're not using (i.e. weight == 0).
+        % This prevents the network being fully connected.
         if coursework
-            d_weights('1') = d_weights('1') .* (w1 ~= 0)';
-            d_weights('2') = d_weights('2') .* (w2 ~= 0)';
+            d_weights('1') = d_weights('1') .* (w1 ~= 0);
+            d_weights('2') = d_weights('2') .* (w2 ~= 0);
         end
+        
+        % ----------
+        % LOG WEIGHTS
+        % ----------
+        fprintf("Errors at weights, deltas, at layer %d", i);
+        celldisp(values(d_weights));
+        
+        fprintf("Errors at linear weights:");
+        disp(d_linear);
 
         % --------------
         % UPDATE WEIGHTS
         % --------------
-        % update each weight matrix in the map
+        % update each weight matrix in the map using incremental G.D.
         for i=1:length(weights)
             this_layer = int2str(i);
             
             % update momentum term
-            d_weights_old(this_layer) = beta * d_weights_old(this_layer) + d_weights(this_layer)';
+            d_weights_old(this_layer) = beta * d_weights_old(this_layer) + d_weights(this_layer);
             % update weight matrix
             weights(this_layer) = weights(this_layer) - eta * d_weights_old(this_layer);
         end
@@ -116,6 +132,11 @@ for i_epoch = 1:n_epochs
         % udpate the linear terms vector
         d_linear_old = beta * d_linear_old + d_linear';
         linear_terms = linear_terms - eta * d_linear_old;
+        
+        fprintf("NEW WEIGHTS, epoch %d:", i_epoch);
+        celldisp(values(weights));
+        fprintf("NEW LINEAR TERMS WEIGHTS, epoch %d:", i_epoch);
+        disp(linear_terms);
     end
     
     % store average error for this epoch

@@ -26,9 +26,13 @@ for i = 1:length(weights)
     a = arrayfun(a_fn, a * weights(layer_i));
     
     % add linear terms in last iteration
+    % (inputs x linear_weights)
     if i == length(weights)
         a = a + x * linear_terms;
     end
+    
+    fprintf("Activations at layer %d", i);
+    disp(a);
     
     activations(layer_i) = a;
 end

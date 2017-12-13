@@ -156,8 +156,10 @@ for i_epoch = 1:n_epochs
     disp(average_error);
 end
 
-% plot the error decrease as a function of # epochs
-plot(1:n_epochs, errors);
-title(sprintf('Error curves - eta: %.2f - beta: %.2f', eta, beta))
-xlabel('Epoch #')
-ylabel('Average Error across epoch')
+if ~coursework
+    % plot the error decrease as a function of # epochs
+    plot(1:n_epochs, errors);
+    title(sprintf('Error curves - eta: %.2f - beta: %.2f', eta, beta))
+    xlabel('Epoch #')
+    ylabel('Average Error across epoch')
+end

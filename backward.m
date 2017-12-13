@@ -27,7 +27,6 @@ for i=length(weights) : -1:1
     % + store handle to derivative of activ fn. used at this layer
     a = activations(this_layer);
     a_fn_d = @(x) a_functions{i}(x, 1);
-    disp(this_layer);
 
     % ---------------
     % ERRORS AT UNITS

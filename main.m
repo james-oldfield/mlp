@@ -1,13 +1,8 @@
-% define our inputs and ground truth values:
-X = [1 1
-     1 0];
-y = [0 1];
-
 % boolean to specify whether we use coursework weights,
 % this also zeros-out connections for a non-fully connected net.
-coursework = 0;
+coursework = 1;
 % use exponential learning rate decay?
-exp_eta_decay = 1;
+exp_eta_decay = 0;
 
 % --------------------
 % SPECIFY ARCHITECTURE
@@ -16,12 +11,12 @@ exp_eta_decay = 1;
 % 3 units in hidden layer
 % 5 units in next hidden layer, etc...
 % 1 unit in the output
-architecture = [2 3 4 5 1];
+architecture = [2 3 1];
 
 % specify which activ fn we wish to use at each layer,
 % storing function handles.
 % MUST specify an activ function for each layer.
-a_functions  = {@sigmoid, @sigmoid, @sigmoid, @identity};
+a_functions  = {@sigmoid, @identity};
 
 last_layer = int2str(length(architecture)-1);
 
@@ -56,11 +51,15 @@ if coursework == 1
     linear_terms = linear_weights;
 end
 
+% load data
+load X.dat;
+load y.dat;
+
 % ---------------
 % HYPERPARAMETERS
 % ---------------
-eta = 0.75;
-beta = 0.2;
+eta = 0.1;
+beta = 0.25;
 n_epochs = 100;
 
 % use coursework's hyperparams if desired
@@ -83,7 +82,7 @@ for i_epoch = 1:n_epochs
     if exp_eta_decay
         eta = eta * exp(-0.01 * i_epoch);
     end
-
+    
     % loop through examples in training set
     for i_example = 1:length(X)
         x_example = X(i_example, :);
